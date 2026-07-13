@@ -25,6 +25,7 @@ nav {
 	gap: 0.5rem;
 }
 
+
 nav a,
 .dropdown label {
 	font-size: 2rem;
@@ -84,4 +85,23 @@ nav a:hover,
 
 .resultado p {
 	font-size: 1.5rem;
+}
+
+.botao-voltar {
+	position: fixed;
+	top: 1rem;
+	left: 1rem;
+	font-size: 1.5rem;
+	padding: 0.75rem;
+	color: black;
+	background-color: transparent;
+	border: none;
+	text-decoration: none;
+	cursor: pointer;
+	transition: 0.2s ease-in-out;
+}
+
+.botao-voltar:hover {
+	background-color: black;
+	color: white;
 }
