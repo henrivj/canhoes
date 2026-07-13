@@ -11,15 +11,10 @@ export default class Renderizador {
     static correnteza = configuracoes.fisica.correnteza;
     static velocidadeLimpeza = configuracoes.jogo.velocidadeLimpeza;
 
-    // Margem extra em volta do sprite para o blur não ser cortado nas bordas do canvas de cache
-    static #margemSombra = Renderizador.sombras.desfoqueSombra * 3;
-
     constructor(canvas, contexto, jogo) {
         this.canvas = canvas;
         this.contexto = contexto;
         this.jogo = jogo;
-        // sprite (Image) -> { canvas, margem } com a sombra já borrada, calculada uma única vez
-        this.cacheSombras = new Map();
     }
 
     spriteSeta = carregarImagem(configuracoes.renderizador.spriteSeta);
@@ -69,47 +64,16 @@ export default class Renderizador {
         this.contexto.restore();
     }
 
-
-    #obterSombraCache(sprite) {
-        let entrada = this.cacheSombras.get(sprite);
-        if (entrada) return entrada;
-
-        const margem = Renderizador.#margemSombra;
-        const largura = sprite.width + margem * 2;
-        const altura = sprite.height + margem * 2;
-
-        const canvasSombra = document.createElement('canvas');
-        canvasSombra.width = largura;
-        canvasSombra.height = altura;
-
-        const ctxSombra = canvasSombra.getContext('2d');
-        ctxSombra.filter = `brightness(0) blur(${Renderizador.sombras.desfoqueSombra}px)`;
-        ctxSombra.drawImage(sprite, margem, margem, sprite.width, sprite.height);
-
-        entrada = { canvas: canvasSombra, margem };
-        this.cacheSombras.set(sprite, entrada);
-        return entrada;
-    }
-
     #desenharSombra(sprite, entidade, deslocamento, inverterY = false) {
         const largura = entidade.tamanho.largura;
         const altura = entidade.tamanho.altura;
-        const { canvas: canvasSombra, margem } = this.#obterSombraCache(sprite);
-
-        const escalaX = largura / sprite.width;
-        const escalaY = altura / sprite.height;
 
         this.contexto.save();
         this.contexto.translate(entidade.posicao.x + largura * deslocamento.x, entidade.posicao.y + altura * deslocamento.y);
         if (inverterY) this.contexto.scale(1, -1);
+        this.contexto.filter = `brightness(0) (${Renderizador.sombras.desfoqueSombra}px)`;
         this.contexto.globalAlpha = Renderizador.sombras.opacidadeSombra;
-        this.contexto.drawImage(
-            canvasSombra,
-            -largura / 2 - margem * escalaX,
-            -altura / 2 - margem * escalaY,
-            canvasSombra.width * escalaX,
-            canvasSombra.height * escalaY
-        );
+        this.contexto.drawImage(sprite, -largura / 2, -altura / 2, largura, altura);
         this.contexto.restore();
     }
 
