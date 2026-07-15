@@ -4,7 +4,7 @@ import { normalizarAngulo, limitar } from "../utils/matematica.js";
 import { limites } from "../utils/canvas.js";
 
 export default class Renderizador {
-    static sombras = configuracoes.renderizador.sombras;
+    static reflexos = configuracoes.renderizador.reflexos;
     static hud = configuracoes.hud;
     static jogadores = configuracoes.barcos.jogadores;
     static piscar = configuracoes.barcos.piscar;
@@ -64,15 +64,14 @@ export default class Renderizador {
         this.contexto.restore();
     }
 
-    #desenharSombra(sprite, entidade, deslocamento, inverterY = false) {
+    #desenharReflexo(sprite, entidade, deslocamento, inverterY = false) {
         const largura = entidade.tamanho.largura;
         const altura = entidade.tamanho.altura;
 
         this.contexto.save();
         this.contexto.translate(entidade.posicao.x + largura * deslocamento.x, entidade.posicao.y + altura * deslocamento.y);
         if (inverterY) this.contexto.scale(1, -1);
-        this.contexto.filter = `brightness(0) (${Renderizador.sombras.desfoqueSombra}px)`;
-        this.contexto.globalAlpha = Renderizador.sombras.opacidadeSombra;
+        this.contexto.globalAlpha = Renderizador.reflexos.opacidadeReflexo;
         this.contexto.drawImage(sprite, -largura / 2, -altura / 2, largura, altura);
         this.contexto.restore();
     }
@@ -90,8 +89,7 @@ export default class Renderizador {
         return Math.floor(barco.cooldownInvulnerabilidade / Renderizador.piscar) % 2 === 0;
     }
 
-    #desenharComSombra(entidade, deslocamento, inverterY = false) {
-        this.#desenharSombra(entidade.sprite, entidade, deslocamento, inverterY);
+    #desenharEntidade(entidade) {
         this.contexto.drawImage(entidade.sprite, entidade.posicao.x, entidade.posicao.y, entidade.tamanho.largura, entidade.tamanho.altura);
     }
 
@@ -108,7 +106,6 @@ export default class Renderizador {
     }
 
     #desenharBala(bala) {
-        this.#desenharSombra(bala.sprite, bala, Renderizador.sombras.deslocamento.balaCanhao);
         this.#desenharRotacionado(bala.sprite, bala.centro.x, bala.centro.y, bala.rotacao.atual, bala.tamanho.largura, bala.tamanho.altura);
     }
 
@@ -212,17 +209,31 @@ export default class Renderizador {
         if (this.deslocamentoFundo > 0) this.contexto.drawImage(this.fundo, this.deslocamentoFundo - limites.largura, 0, limites.largura, limites.altura);
     }
 
+    renderizarReflexos() {
+        const deslocamento = Renderizador.reflexos.deslocamento;
+
+        this.jogo.nivel.pedras.forEach(pedra => this.#desenharReflexo(pedra.sprite, pedra, deslocamento.pedra, true));
+        this.jogo.nivel.barris.forEach(barril => this.#desenharReflexo(barril.sprite, barril, deslocamento.barril));
+        this.jogo.nivel.barcosInimigos.forEach(inimigo => this.#desenharReflexo(inimigo.sprite, inimigo, deslocamento.barcoInimigo, true));
+
+        this.jogo.barcos.forEach(barco => {
+            if (this.#barcoPiscando(barco)) return;
+            this.#desenharReflexo(barco.sprite[this.#indiceSprite(barco, true)], barco, deslocamento.barco, true);
+        });
+
+        this.jogo.barcos.forEach(barco => barco.balasCanhao.forEach(bala => this.#desenharReflexo(bala.sprite, bala, deslocamento.balaCanhao)));
+    }
+
     renderizarFlutuantes() {
-        this.jogo.nivel.pedras.forEach(pedra => this.#desenharComSombra(pedra, Renderizador.sombras.deslocamento.pedra));
-        this.jogo.nivel.barris.forEach(barril => this.#desenharComSombra(barril, Renderizador.sombras.deslocamento.barril));
-        this.jogo.nivel.barcosInimigos.forEach(inimigo => this.#desenharComSombra(inimigo, Renderizador.sombras.deslocamento.barcoInimigo, true));
+        this.jogo.nivel.pedras.forEach(pedra => this.#desenharEntidade(pedra));
+        this.jogo.nivel.barris.forEach(barril => this.#desenharEntidade(barril));
+        this.jogo.nivel.barcosInimigos.forEach(inimigo => this.#desenharEntidade(inimigo));
     }
 
     renderizarBarcos() {
         this.jogo.barcos.forEach(barco => {
             if (this.#barcoPiscando(barco)) return;
 
-            this.#desenharSombra(barco.sprite[this.#indiceSprite(barco, true)], barco, Renderizador.sombras.deslocamento.barco, true);
             this.contexto.drawImage(barco.sprite[this.#indiceSprite(barco)], barco.posicao.x, barco.posicao.y, barco.tamanho.largura, barco.tamanho.altura);
             this.#desenharSeta(barco);
         });
@@ -254,6 +265,7 @@ export default class Renderizador {
     renderizar() {
         this.contexto.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.renderizarFundo();
+        this.renderizarReflexos();
         this.renderizarFlutuantes();
         this.renderizarBarcos();
         this.renderizarBalasCanhao();
