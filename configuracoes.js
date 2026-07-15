@@ -103,8 +103,8 @@ export const configuracoes = {
             deslocamento: {
                 barco: { x: 0.5, y: 1 },
                 balaCanhao: { x: 1, y: 2 },
-                barcoInimigo: { x: 0.5, y: 1 },
-                pedra: { x: 0.55, y: 0.95 },
+                barcoInimigo: { x: 0.5, y: 1.2 },
+                pedra: { x: 0.55, y: 1 },
                 barril: { x: 0.55, y: 0.7 },
             },
         },
@@ -135,9 +135,19 @@ export const configuracoes = {
             valorPontosBase: 10,
             numeroFaixas: 6,
             itensSpawn: [
-                { tipo: 'barril', escalaFaixa: { minimo: 0.175, maximo: 0.2 }, chance: 0.0035 },
-                { tipo: 'pedra', escalaFaixa: { minimo: 0.75, maximo: 0.95 }, chance: 0.0045 },
-                { tipo: 'barcoInimigo', escalaFaixa: { minimo: 0.65, maximo: 0.82 }, chance: 0.0010 },
+                { tipo: 'barril', escalaFaixa: { minimo: 0.275, maximo: 0.35 }, chance: 0.0035 },
+                { tipo: 'pedra', escalaFaixa: { minimo: 0.7, maximo: 0.9 }, chance: 0.0045 },
+                { tipo: 'barcoInimigo', escalaFaixa: { minimo: 0.75, maximo: 0.95 }, chance: 0.0011 },
+            ],
+        },
+        {
+            metaPontuacao: 100,
+            valorPontosBase: 10,
+            numeroFaixas: 7,
+            itensSpawn: [
+                { tipo: 'barril', escalaFaixa: { minimo: 0.2, maximo: 0.3 }, chance: 0.0025 },
+                { tipo: 'pedra', escalaFaixa: { minimo: 0.85, maximo: 0.95 }, chance: 0.0055 },
+                { tipo: 'barcoInimigo', escalaFaixa: { minimo: 0.9, maximo: 1 }, chance: 0.0015 },
             ],
         },
         {
@@ -145,19 +155,9 @@ export const configuracoes = {
             valorPontosBase: 10,
             numeroFaixas: 8,
             itensSpawn: [
-                { tipo: 'barril', escalaFaixa: { minimo: 0.2, maximo: 0.25 }, chance: 0.0025 },
-                { tipo: 'pedra', escalaFaixa: { minimo: 0.85, maximo: 0.95 }, chance: 0.0050 },
-                { tipo: 'barcoInimigo', escalaFaixa: { minimo: 0.78, maximo: 0.82 }, chance: 0.001 },
-            ],
-        },
-        {
-            metaPontuacao: 100,
-            valorPontosBase: 10,
-            numeroFaixas: 10,
-            itensSpawn: [
-                { tipo: 'barril', escalaFaixa: { minimo: 0.55, maximo: 0.72 }, chance: 0.0015 },
-                { tipo: 'pedra', escalaFaixa: { minimo: 0.78, maximo: 0.96 }, chance: 0.0055 },
-                { tipo: 'barcoInimigo', escalaFaixa: { minimo: 0.7, maximo: 0.88 }, chance: 0.0020 },
+                { tipo: 'barril', escalaFaixa: { minimo: 0.15, maximo: 0.25 }, chance: 0.0015 },
+                { tipo: 'pedra', escalaFaixa: { minimo: 1, maximo: 1.25 }, chance: 0.006 },
+                { tipo: 'barcoInimigo', escalaFaixa: { minimo: 1, maximo: 1.1 }, chance: 0.0025 },
             ],
         },
     ],
