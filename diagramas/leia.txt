@@ -1,1 +1,1 @@
-diagramas de classe e sequencia não foram feitos no Astah pois
+diagramas de classe e sequencia não foram feitos no Astah pois a ferramenta nao possui versao gratuita disponivel atualmente
